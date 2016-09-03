@@ -8,7 +8,6 @@ Gestalt is a simple, elegant PHP package for managing your framework's configura
 What makes Gestalt unique is its expressive collection-like syntax and the ability to define and load configuration values in virtually any fashion via a common interface.
 
 ```php
-
 // Create a new Configuration object with an array of values...
 $configuration = new Configuration(['debug' => true]);
 
@@ -25,7 +24,6 @@ $mailDriver = $configuration->get('mail.driver');
 
 // Or, access the Configuration object as an array:
 $appConfig = $configuration['app'];
-
 ```
 
 As you can see, Gestalt is sweet and simple to play with right out of the box. Its expressive syntax makes retrieving and setting values a breeze, while its custom loader functionality provides complete freedom in how you define your framework's configuration values.
@@ -41,32 +39,27 @@ Install via Composer:
 You can create a new Configuration instance by simply passing an associative array of configuration values to the object's constructor:
 
 ```php
-
 use Gestalt\Configuration;
 
 $config = new Configuration([
     'debug' => false,
     'name' => 'Sam Rapaport',
 ]); 
-
 ```
 
 Once the object has been created, we can easily access its values using either the `get` method or accessing the object as an array:
 
 ```php
-
 // "Sam Rapaport"
 echo $config->get('name');
 
 // "Sam Rapaport"
 echo $config['name'];
-
 ```
 
 Using the `get` method, we can use "dot notation" for accessing nested values. In the following example, the `$debug` variable will be set to `true`:
 
 ```php
-
 $config = new Configuration([
     'app' => [
         'debug' => true,
@@ -75,39 +68,31 @@ $config = new Configuration([
 ]);
 
 $debug = $config->get('app.debug');
-
 ```
 
 We can add new items to the configuration object using the `add` method:
 
 ```php
-
 $config->add('mail', ['driver' => 'MailMonkey']);
-
 ```
 
 The `add` method will only update the Configuration object if the configuration item does not already exist. To overwrite an existing configuration value, use the `set` method instead:
 
 ```php
-
 $config->set('debug', false);
-
 ```
 
 #### Custom Loaders
 So far in the examples, we have been creating our Configuration object by passing in an array to its constructor. While this may work for smaller applications and frameworks, it is likely you have a more robust way of storing your configuration values. Gestalt is built to handle such cases thanks to it's custom loaders:
 
 ```php
-
 $loader = new FileLoader;
 $config = Configuration::fromLoader($loader);
-
 ```
 
 Let's take a look at defining a custom loader and how it can help us create a Configuration object more dynamically:
 
 ```php
-
 namespace App\Configuration;
 
 use Gestalt\Loaders\LoaderInterface;
@@ -141,7 +126,6 @@ class FileLoader implements LoaderInterface
         return $items;
     }
 }
-
 ```
 
 All loaders must implement the `Gestalt\Loaders\LoaderInterface` interface and its `load` method. In `load`, we simply grab the configuration values from wherever they are stored (PHP files in this case) and return an array representation of them.
@@ -149,13 +133,11 @@ All loaders must implement the `Gestalt\Loaders\LoaderInterface` interface and i
 Now that we have defined how our loader will get the configuration values, we can simply pass an instance to the `Configuration::fromLoader` method to retrieve a new Configuration instance:
 
 ```php
-
 $loader = new FileLoader;
 $config = Configuration::fromLoader($loader);
 
 $app = $config->get('app');
 $mail = $config->get('mail');
-
 ```
 
 As you can see, using loaders can be quite powerful in conjunction with Gestalt's Configuration object. While you can create your own loaders, Gestalt ships with some prebuilt loaders right out of the box. They, along with the interface, live in the `Gestalt\Loaders` namespace.
