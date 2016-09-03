@@ -65,7 +65,7 @@ class Configuration implements ArrayAccess
             if (array_key_exists($piece, $result)) {
                 $result = $result[$piece];
             } else {
-                return null;
+                return;
             }
         }
 
@@ -76,7 +76,7 @@ class Configuration implements ArrayAccess
      * Determine if the specified item exists in the configuration.
      *
      * @param  string $key
-     * @return boolean
+     * @return bool
      */
     public function exists($key)
     {
@@ -136,7 +136,7 @@ class Configuration implements ArrayAccess
      * Determine if the configuration item exists at the given offset.
      *
      * @param  string $offset
-     * @return boolean
+     * @return bool
      */
     public function offsetExists($offset)
     {
