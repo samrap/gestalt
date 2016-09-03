@@ -1,7 +1,7 @@
 # Gestalt
 
 #### ge·stalt (n)
-_Something that is made of many parts and yet is somehow more than or different from the combination of its parts; broadly : the general quality or character of something._
+> _Something that is made of many parts and yet is somehow more than or different from the combination of its parts; broadly : the general quality or character of something._
 
 Gestalt is a simple, elegant PHP package for managing your framework's configuration values. It is lightweight, flexible, framework agnostic, and has no dependencies other than PHP itself.
 
