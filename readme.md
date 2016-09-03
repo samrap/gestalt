@@ -1,6 +1,6 @@
 # Gestalt
 
-[![StyleCI](https://styleci.io/repos/67276253/shield)](https://styleci.io/repos/67276253)
+[![StyleCI](https://styleci.io/repos/67276253/shield?style=flat)](https://styleci.io/repos/67276253)
 [![Build Status](https://travis-ci.org/samrap/gestalt.svg?branch=master)](https://travis-ci.org/samrap/gestalt)
 [![Latest Stable Version](https://poser.pugx.org/samrap/gestalt/v/stable)](https://packagist.org/packages/samrap/gestalt)
 [![Total Downloads](https://poser.pugx.org/samrap/gestalt/downloads)](https://packagist.org/packages/samrap/gestalt)
