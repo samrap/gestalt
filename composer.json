@@ -1,6 +1,6 @@
 {
     "name": "samrap/gestalt",
-    "description": "A clean, expressive way to handle configuration for your PHP app.",
+    "description": "Gestalt is a simple, elegant PHP package for managing your framework's configuration values.",
     "keywords": ["boilerplate", "configuration", "wrapper", "php"],
     "license": "MIT",
     "authors": [
