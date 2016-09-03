@@ -1,5 +1,11 @@
 # Gestalt
 
+[![StyleCI](https://styleci.io/repos/67276253/shield)](https://styleci.io/repos/67276253)
+[![Build Status](https://travis-ci.org/samrap/gestalt.svg?branch=master)](https://travis-ci.org/samrap/gestalt)
+[![Latest Stable Version](https://poser.pugx.org/samrap/gestalt/v/stable)](https://packagist.org/packages/samrap/gestalt)
+[![Total Downloads](https://poser.pugx.org/samrap/gestalt/downloads)](https://packagist.org/packages/samrap/gestalt)
+[![Latest Unstable Version](https://poser.pugx.org/samrap/gestalt/v/unstable)](https://packagist.org/packages/samrap/gestalt)
+
 #### ge·stalt (n)
 > _Something that is made of many parts and yet is somehow more than or different from the combination of its parts; broadly : the general quality or character of something._
 
