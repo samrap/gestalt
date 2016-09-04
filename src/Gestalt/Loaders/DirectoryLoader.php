@@ -4,7 +4,7 @@ namespace Gestalt\Loaders;
 
 use DirectoryIterator;
 
-class FileLoader implements LoaderInterface
+class DirectoryLoader implements LoaderInterface
 {
     /**
      * The directory to load PHP configuration files from.
@@ -14,7 +14,7 @@ class FileLoader implements LoaderInterface
     protected $directory;
 
     /**
-     * Create a FileLoader instance.
+     * Create a DirectoryLoader instance.
      *
      * @param string $directory
      */
