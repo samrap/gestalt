@@ -28,7 +28,7 @@ class Configuration implements ArrayAccess
     /**
      * Create a Configuration instance from a LoaderInterface's `load` method.
      *
-     * @param  LoaderInterface $loader
+     * @param  \Gestalt\Loaders\LoaderInterface $loader
      * @return \Gestalt\Configuration
      */
     public static function fromLoader(LoaderInterface $loader)
