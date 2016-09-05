@@ -99,4 +99,19 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('bar', $c['foo']);
     }
+
+    public function test_instantiation_from_different_types()
+    {
+        $items = ['foo' => 'bar'];
+        $a = new Configuration($items);
+        $b = new Configuration(new Configuration($items));
+        $c = new Configuration(new ArrayIterator($items));
+
+        $this->assertInternalType('array', $a->all());
+        $this->assertInternalType('array', $b->all());
+        $this->assertInternalType('array', $c->all());
+        $this->assertEquals('bar', $a->get('foo'));
+        $this->assertEquals('bar', $b->get('foo'));
+        $this->assertEquals('bar', $c->get('foo'));
+    }
 }

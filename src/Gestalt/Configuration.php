@@ -3,6 +3,7 @@
 namespace Gestalt;
 
 use ArrayAccess;
+use Traversable;
 use Gestalt\Loaders\LoaderInterface;
 
 class Configuration implements ArrayAccess
@@ -17,11 +18,11 @@ class Configuration implements ArrayAccess
     /**
      * Create a new Configuration instance.
      *
-     * @param array $items
+     * @param mixed $items
      */
-    public function __construct(array $items = [])
+    public function __construct($items = [])
     {
-        $this->items = $items;
+        $this->items = $this->getItemsAsArray($items);
     }
 
     /**
@@ -35,6 +36,25 @@ class Configuration implements ArrayAccess
         // We will create a new instance using `self`, as we do not want child
         // classes creating new instances of themselves if this is called.
         return new self($loader->load());
+    }
+
+    /**
+     * Convert the given items into an array.
+     *
+     * @param  mixed $items
+     * @return array
+     */
+    protected function getItemsAsArray($items)
+    {
+        if (is_array($items)) {
+            return $items;
+        } elseif ($items instanceof self) {
+            return $items->all();
+        } elseif ($items instanceof Traversable) {
+            return iterator_to_array($items);
+        }
+
+        return (array) $items;
     }
 
     /**
