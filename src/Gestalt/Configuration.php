@@ -4,9 +4,10 @@ namespace Gestalt;
 
 use ArrayAccess;
 use Traversable;
+use Gestalt\Util\Observable;
 use Gestalt\Loaders\LoaderInterface;
 
-class Configuration implements ArrayAccess
+class Configuration extends Observable implements ArrayAccess
 {
     /**
      * The configuration items.
@@ -123,6 +124,8 @@ class Configuration implements ArrayAccess
     {
         if (! $this->exists($key)) {
             $this->items[$key] = $value;
+
+            $this->notify();
         }
     }
 
@@ -136,6 +139,8 @@ class Configuration implements ArrayAccess
     public function set($key, $value)
     {
         $this->items[$key] = $value;
+
+        $this->notify();
     }
 
     /**

@@ -4,6 +4,26 @@ use Gestalt\Configuration;
 
 class ConfigurationTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Get a mocked Observer implementation.
+     */
+    protected function getObserver($maxUpdates = 0, $minUpdates = 1)
+    {
+        $observer = Mockery::mock('Gestalt\Util\ObserverInterface');
+
+        if ($maxUpdates > 0) {
+            $observer->shouldReceive('update')
+                    ->atLeast()
+                    ->times($minUpdates)
+                    ->atMost($maxUpdates)
+                    ->times($maxUpdates);
+        } else {
+            $observer->shouldReceive('update')->atLeast()->times($minUpdates);
+        }
+
+        return $observer;
+    }
+
     public function test_get_method_gets_item()
     {
         $c = new Configuration(['debug' => true, 'foo' => 'bar']);
@@ -125,5 +145,47 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
         $a->reset();
         $this->assertEquals($items, $a->all());
+    }
+
+    public function test_configuration_is_observable()
+    {
+        $this->assertInstanceOf('Gestalt\Util\Observable', new Configuration);
+    }
+
+    public function test_configuration_notifies_observers_on_add()
+    {
+        $c = new Configuration(['foo' => 123, 'bar' => 456]);
+
+        $c->attach($this->getObserver());
+        $c->attach($this->getObserver());
+
+        $c->add('baz', 789);
+    }
+
+    public function test_configuration_notifies_observers_on_set()
+    {
+        $c = new Configuration(['foo' => 123, 'bar' => 456]);
+
+        $c->attach($this->getObserver());
+        $c->attach($this->getObserver());
+
+        $c->set('baz', 789);
+    }
+
+    public function test_configuration_does_not_notify_observers_on_reset()
+    {
+        $c = new Configuration(['foo' => 123]);
+
+        $c->attach($this->getObserver(1));
+        $c->set('foo', 456);
+
+        // Since we told the mocked observer it should only be updated once,
+        // if the reset method notifies observers, we will get an error.
+        $c->reset();
+    }
+
+    public function tearDown()
+    {
+        Mockery::close();
     }
 }
