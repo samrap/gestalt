@@ -37,7 +37,7 @@ As you can see, Gestalt is sweet and simple to play with right out of the box. I
 ## Installation
 Install via Composer:
 
-`composer install samrap/gestalt`
+`composer require samrap/gestalt`
 
 ## Usage
 
