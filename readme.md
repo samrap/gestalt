@@ -185,6 +185,7 @@ To create an observer, define a class that implements the `Gestalt\Util\Observer
 ```php
 ...
 
+use Gestalt\Util\Observable;
 use Gestalt\Util\ObserverInterface;
 
 class ConfigurationObserver implements ObserverInterface
