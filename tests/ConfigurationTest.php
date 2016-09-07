@@ -114,4 +114,16 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $b->get('foo'));
         $this->assertEquals('bar', $c->get('foo'));
     }
+
+    public function test_reset_method_resets_changes()
+    {
+        $items = ['foo' => 'bar'];
+        $a = new Configuration($items);
+
+        $a->set('foo', 123);
+        $this->assertEquals(['foo' => 123], $a->all());
+
+        $a->reset();
+        $this->assertEquals($items, $a->all());
+    }
 }

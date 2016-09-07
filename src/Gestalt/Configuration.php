@@ -16,6 +16,13 @@ class Configuration implements ArrayAccess
     protected $items;
 
     /**
+     * The original configuration items.
+     *
+     * @var array
+     */
+    protected $original;
+
+    /**
      * Create a new Configuration instance.
      *
      * @param mixed $items
@@ -23,6 +30,8 @@ class Configuration implements ArrayAccess
     public function __construct($items = [])
     {
         $this->items = $this->getItemsAsArray($items);
+
+        $this->original = $this->items;
     }
 
     /**
@@ -138,6 +147,18 @@ class Configuration implements ArrayAccess
     public function remove($key)
     {
         unset($this->items[$key]);
+    }
+
+    /**
+     * Reset the configuration items to the original values.
+     *
+     * @return \Gestalt\Collection
+     */
+    public function reset()
+    {
+        $this->items = $this->original;
+
+        return $this;
     }
 
     /**
