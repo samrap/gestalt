@@ -139,7 +139,7 @@ All loaders must implement the `Gestalt\Loaders\LoaderInterface` interface and i
 Now that we have defined how our loader will get the configuration values, we can simply pass an instance to the `Configuration::fromLoader` method to retrieve a new Configuration instance:
 
 ```php
-$loader = new PhpDirectoryLoader;
+$loader = new PhpFileLoader;
 $config = Configuration::fromLoader($loader);
 
 $app = $config->get('app');
