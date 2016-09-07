@@ -38,7 +38,7 @@ class IniDirectoryLoader implements LoaderInterface
                 $filename = $file->getFilename();
                 $config = substr($filename, 0, strrpos($filename, '.'));
 
-                $items[$config] = parse_ini_file($filename, true);
+                $items[$config] = parse_ini_file($file->getPathName(), true);
             }
         }
 
