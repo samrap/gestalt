@@ -37,7 +37,7 @@ As you can see, Gestalt is sweet and simple to play with right out of the box. I
 ## Installation
 Install via Composer:
 
-`composer install samrap/gestalt`
+`composer require samrap/gestalt`
 
 ## Usage
 
@@ -104,7 +104,7 @@ $config->reset()->add('debug', true);
 So far in the examples, we have been creating our Configuration object by passing in an array to its constructor. While this may work for smaller applications and frameworks, it is likely you have a more robust way of storing your configuration values. Gestalt is built to handle such cases thanks to it's custom loaders:
 
 ```php
-$loader = new DirectoryLoader;
+$loader = new PhpDirectoryLoader;
 $config = Configuration::fromLoader($loader);
 ```
 
@@ -115,7 +115,7 @@ namespace App\Configuration;
 
 use Gestalt\Loaders\LoaderInterface;
 
-class DirectoryLoader implements LoaderInterface
+class PhpFileLoader implements LoaderInterface
 {
     /**
      * Configuration files to load.
@@ -151,7 +151,7 @@ All loaders must implement the `Gestalt\Loaders\LoaderInterface` interface and i
 Now that we have defined how our loader will get the configuration values, we can simply pass an instance to the `Configuration::fromLoader` method to retrieve a new Configuration instance:
 
 ```php
-$loader = new DirectoryLoader;
+$loader = new PhpFileLoader;
 $config = Configuration::fromLoader($loader);
 
 $app = $config->get('app');

@@ -4,17 +4,17 @@ namespace Gestalt\Loaders;
 
 use DirectoryIterator;
 
-class DirectoryLoader implements LoaderInterface
+class IniDirectoryLoader implements LoaderInterface
 {
     /**
-     * The directory to load PHP configuration files from.
+     * The directory to load INI configuration files from.
      *
      * @var array
      */
     protected $directory;
 
     /**
-     * Create a DirectoryLoader instance.
+     * Create an IniDirectoryLoader instance.
      *
      * @param string $directory
      */
@@ -34,11 +34,11 @@ class DirectoryLoader implements LoaderInterface
         $directory = new DirectoryIterator(realpath($this->directory));
 
         foreach ($directory as $file) {
-            if ($file->isFile() && $file->getExtension() == 'php') {
+            if ($file->isFile() && $file->getExtension() == 'ini') {
                 $filename = $file->getFilename();
                 $config = substr($filename, 0, strrpos($filename, '.'));
 
-                $items[$config] = require $file->getPathname();
+                $items[$config] = parse_ini_file($file->getPathName(), true);
             }
         }
 
