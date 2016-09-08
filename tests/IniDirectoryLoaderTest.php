@@ -6,7 +6,7 @@ class IniDirectoryLoaderTest extends PHPUnit_Framework_TestCase
 {
     public function test_load_method_returns_configuration_array()
     {
-        $loader = new IniDirectoryLoader(__DIR__.'/ini');
+        $loader = new IniDirectoryLoader(__DIR__.'/config');
         $loaded = $loader->load();
 
         $this->assertArrayHasKey('foobar', $loaded);
