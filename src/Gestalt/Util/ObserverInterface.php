@@ -11,7 +11,7 @@ interface ObserverInterface
     /**
      * Update the observer.
      *
-     * @param  Observable $observable
+     * @param  \Gestalt\Util\Observable $observable
      * @return void
      */
     public function update(Observable $observable);

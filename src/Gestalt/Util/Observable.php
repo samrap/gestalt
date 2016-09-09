@@ -14,7 +14,7 @@ class Observable
     /**
      * Attach a new observer to the list of observers.
      *
-     * @param  ObserverInterface $observer
+     * @param  \Gestalt\Util\ObserverInterface $observer
      * @return void
      */
     public function attach(ObserverInterface $observer)
@@ -37,7 +37,7 @@ class Observable
     /**
      * Detach an observer from the list of observers.
      *
-     * @param  ObserverInterface $observer
+     * @param  \Gestalt\Util\ObserverInterface $observer
      * @return void
      */
     public function detach(ObserverInterface $observer)
