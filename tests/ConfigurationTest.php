@@ -56,12 +56,30 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bin', $c->get('baz'));
     }
 
-    public function test_add_method_ignores_existing_item()
+    public function test_add_method_adds_new_item_with_dot_notation()
+    {
+        $c = new Configuration([
+            'foo' => ['bar' => 123],
+        ]);
+
+        $c->add('foo.bin', 456);
+
+        $this->assertEquals([
+            'foo' => [
+                'bar' => 123,
+                'bin' => 456,
+            ],
+        ], $c->all());
+    }
+
+    public function test_add_method_ignores_existing_items()
     {
         $c = new Configuration(['foo' => 'bar']);
         $c->add('foo', 'bin');
+        $c->add('foo.bin', 123);
 
         $this->assertEquals('bar', $c->get('foo'));
+        $this->assertNull($c->get('foo.bin'));
     }
 
     public function test_set_method_sets_item()
@@ -74,13 +92,42 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bin', $c->get('baz'));
     }
 
+    public function test_set_method_sets_new_item_with_dot_notation()
+    {
+        $c = new Configuration([
+            'app' => ['debug' => true],
+        ]);
+
+        $c->set('app.foo', 123);
+        $c->set('app.debug', false);
+        $c->set('app.bar.baz', 456);
+        $c->set('mail.driver', 'MailMonkey');
+
+        $this->assertEquals([
+            'debug' => false,
+            'foo' => 123,
+            'bar' => [
+                'baz' => 456,
+            ],
+        ], $c->get('app'));
+
+        $this->assertEquals(['driver' => 'MailMonkey'], $c->get('mail'));
+    }
+
     public function test_remove_method_removes_item()
     {
-        $c = new Configuration(['foo' => 'bar']);
+        $c = new Configuration([
+            'foo' => 'bar',
+            'baz' => [
+                'bin' => 123,
+            ],
+        ]);
 
         $c->remove('foo');
+        $c->remove('baz.bin');
 
-        $this->assertEmpty($c->all());
+        $this->assertNull($c->get('foo'));
+        $this->assertEmpty($c->get('baz'));
     }
 
     public function test_load_method_loads_configuration()
