@@ -82,7 +82,7 @@ class Configuration implements ArrayAccess
         $result = $this->items;
 
         foreach (explode('.', $key) as $piece) {
-            if (array_key_exists($piece, $result)) {
+            if (is_array($result) && array_key_exists($piece, $result)) {
                 $result = $result[$piece];
             } else {
                 return;
@@ -112,8 +112,30 @@ class Configuration implements ArrayAccess
      */
     public function add($key, $value)
     {
-        if (! $this->exists($key)) {
-            $this->items[$key] = $value;
+        $keys = explode('.', $key);
+        $section = &$this->items;
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            if (! isset($section[$key])) {
+                // If the key does not exist, we will set it to an empty array
+                // and move into the next dimension.
+                $section[$key] = [];
+            } elseif (! is_array($section[$key])) {
+                // If the item at this dimension is not an array, then we would
+                // be overriding it if we continued any further. As the great
+                // master programmer Yoda once said, exit we must.
+                return;
+            }
+
+            $section = &$section[$key];
+        }
+
+        $key = array_shift($keys);
+
+        if (! array_key_exists($key, $section)) {
+            $section[$key] = $value;
         }
     }
 
@@ -126,7 +148,22 @@ class Configuration implements ArrayAccess
      */
     public function set($key, $value)
     {
-        $this->items[$key] = $value;
+        $keys = explode('.', $key);
+        $section = &$this->items;
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            if (! isset($section[$key]) || ! is_array($section[$key])) {
+                // If the key does not exist, we will set it to an empty array
+                // and move into the next dimension.
+                $section[$key] = [];
+            }
+
+            $section = &$section[$key];
+        }
+
+        $section[array_shift($keys)] = $value;
     }
 
     /**
@@ -137,7 +174,20 @@ class Configuration implements ArrayAccess
      */
     public function remove($key)
     {
-        unset($this->items[$key]);
+        $keys = explode('.', $key);
+        $section = &$this->items;
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            if (! isset($section[$key])) {
+                return;
+            }
+
+            $section = &$section[$key];
+        }
+
+        unset($section[array_shift($keys)]);
     }
 
     /**
