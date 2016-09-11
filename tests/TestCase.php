@@ -43,8 +43,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
     /**
      * Get a mocked \Gestalt\Util\ObserverInterface implementation.
      *
-     * @param  integer $maxUpdates
-     * @param  integer $minUpdates
+     * @param  int $maxUpdates
+     * @param  int $minUpdates
      * @return \Mockery
      */
     protected function getObserver($maxUpdates = 0, $minUpdates = 1)
