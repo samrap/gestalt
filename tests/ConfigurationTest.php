@@ -2,75 +2,42 @@
 
 use Gestalt\Configuration;
 
-class ConfigurationTest extends PHPUnit_Framework_TestCase
+class ConfigurationTest extends TestCase
 {
-    /**
-     * Get a mocked Observer implementation.
-     */
-    protected function getObserver($maxUpdates = 0, $minUpdates = 1)
-    {
-        $observer = Mockery::mock('Gestalt\Util\ObserverInterface');
-
-        if ($maxUpdates > 0) {
-            $observer->shouldReceive('update')
-                    ->atLeast()
-                    ->times($minUpdates)
-                    ->atMost($maxUpdates)
-                    ->times($maxUpdates);
-        } else {
-            $observer->shouldReceive('update')->atLeast()->times($minUpdates);
-        }
-
-        return $observer;
-    }
-
     public function test_get_method_gets_item()
     {
-        $c = new Configuration(['debug' => true, 'foo' => 'bar']);
+        $c = new Configuration($this->getConfigurationItems());
 
-        $this->assertTrue($c->get('debug'));
-        $this->assertEquals('bar', $c->get('foo'));
+        $this->assertArrayHasKey('debug', $c->get('app'));
     }
 
     public function test_get_method_gets_item_with_dot_notation()
     {
-        $c = new Configuration([
-            'app' => [
-                'debug' => true,
-                'url' => 'localhost',
-                'foo' => ['bar' => 'baz'],
-            ],
-            'mail' => [
-                'from' => 'sam@example.com',
-                'reply-to' => 'dev@null.com',
-            ],
-        ]);
+        $c = new Configuration($this->getConfigurationItems());
 
         $this->assertTrue($c->get('app.debug'));
-        $this->assertEquals('baz', $c->get('app.foo.bar'));
-        $this->assertEquals('sam@example.com', $c->get('mail.from'));
+        $this->assertEquals('1.0', $c->get('app.version'));
+        $this->assertEquals('gestalt', $c->get('database.drivers.mysql.database'));
     }
 
     public function test_all_method_gets_all_items()
     {
-        $items = ['app' => ['foo' => 'bar']];
-
-        $c = new Configuration($items);
+        $items = $this->getConfigurationItems();
+        $c = new Configuration($this->getConfigurationItems());
 
         $this->assertEquals($items, $c->all());
     }
 
     public function test_exists_method_verifies_existance()
     {
-        $c = new Configuration(['foo' => 'bar']);
+        $c = new Configuration($this->getConfigurationItems());
 
-        $this->assertEquals('bar', $c->get('foo'));
-        $this->assertEmpty($c->get('baz'));
+        $this->assertTrue($c->exists('app'));
     }
 
     public function test_add_method_adds_new_item()
     {
-        $c = new Configuration(['foo' => 'bar']);
+        $c = new Configuration($this->getConfigurationItems());
         $c->add('baz', 'bin');
 
         $this->assertEquals('bin', $c->get('baz'));
@@ -78,18 +45,13 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
     public function test_add_method_adds_new_item_with_dot_notation()
     {
-        $c = new Configuration([
-            'foo' => ['bar' => 123],
-        ]);
+        $c = new Configuration($this->getConfigurationItems());
 
-        $c->add('foo.bin', 456);
+        $c->add('app.foo', 123);
+        $c->add('mail.driver', 'MailMonkey');
 
-        $this->assertEquals([
-            'foo' => [
-                'bar' => 123,
-                'bin' => 456,
-            ],
-        ], $c->all());
+        $this->assertEquals(123, $c->get('app.foo'));
+        $this->assertEquals('MailMonkey', $c->get('mail.driver'));
     }
 
     public function test_add_method_ignores_existing_items()
@@ -104,67 +66,61 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
     public function test_set_method_sets_item()
     {
-        $c = new Configuration(['foo' => 'bar']);
-        $c->set('foo', 123);
+        $c = new Configuration($this->getConfigurationItems());
+
+        // The set method should allow overriding.
+        $c->set('app', null);
+        // The set method should also allow basic add functionality.
         $c->set('baz', 'bin');
 
-        $this->assertEquals(123, $c->get('foo'));
+        $this->assertNull($c->get('app'));
         $this->assertEquals('bin', $c->get('baz'));
     }
 
     public function test_set_method_sets_new_item_with_dot_notation()
     {
-        $c = new Configuration([
-            'app' => ['debug' => true],
-        ]);
+        $c = new Configuration($this->getConfigurationItems());
 
         $c->set('app.foo', 123);
         $c->set('app.debug', false);
-        $c->set('app.bar.baz', 456);
         $c->set('mail.driver', 'MailMonkey');
 
-        $this->assertEquals([
-            'debug' => false,
-            'foo' => 123,
-            'bar' => [
-                'baz' => 456,
-            ],
-        ], $c->get('app'));
-
-        $this->assertEquals(['driver' => 'MailMonkey'], $c->get('mail'));
+        $this->assertArrayHasKey('version', $c->get('app'));
+        $this->assertEquals('123', $c->get('app.foo'));
+        $this->assertFalse($c->get('app.debug'));
+        $this->assertEquals('MailMonkey', $c->get('mail.driver'));
     }
 
     public function test_remove_method_removes_item()
     {
-        $c = new Configuration([
-            'foo' => 'bar',
-            'baz' => [
-                'bin' => 123,
-            ],
-        ]);
+        $c = new Configuration($this->getConfigurationItems());
+        $c->remove('app');
 
-        $c->remove('foo');
-        $c->remove('baz.bin');
+        $this->assertNull($c->get('app'));
+    }
 
-        $this->assertNull($c->get('foo'));
-        $this->assertEmpty($c->get('baz'));
+    public function test_remote_method_removes_item_with_dot_notation()
+    {
+        $c = new Configuration($this->getConfigurationItems());
+        $c->remove('app.version');
+
+        $this->assertNull($c->get('app.version'));
     }
 
     public function test_load_method_loads_configuration()
     {
         $loader = Mockery::mock('\Gestalt\Loaders\LoaderInterface');
-        $loader->shouldReceive('load')->andReturn(['foo' => 'bar']);
-
+        $loader->shouldReceive('load')->andReturn($this->getConfigurationItems());
         $c = Configuration::fromLoader($loader);
 
-        $this->assertEquals('bar', $c->get('foo'));
+        $this->assertEquals('1.0', $c->get('app.version'));
     }
 
     public function test_for_ArrayAccess_implementation()
     {
-        $c = new Configuration(['foo' => 'bar']);
+        $c = new Configuration($this->getConfigurationItems());
 
-        $this->assertEquals('bar', $c['foo']);
+        $this->assertArrayHasKey('version', $c['app']);
     }
 
     public function test_instantiation_from_different_types()
@@ -184,11 +140,11 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
     public function test_reset_method_resets_changes()
     {
-        $items = ['foo' => 'bar'];
+        $items = $this->getConfigurationItems();
         $a = new Configuration($items);
 
-        $a->set('foo', 123);
-        $this->assertEquals(['foo' => 123], $a->all());
+        $a->set('app', null);
+        $this->assertNull($a->get('app'));
 
         $a->reset();
         $this->assertEquals($items, $a->all());
@@ -196,43 +152,40 @@ class ConfigurationTest extends PHPUnit_Framework_TestCase
 
     public function test_configuration_is_observable()
     {
-        $this->assertInstanceOf('Gestalt\Util\Observable', new Configuration);
+        $this->assertInstanceOf('Gestalt\Util\Observable', new Configuration($this->getConfigurationItems()));
     }
 
     public function test_configuration_notifies_observers_on_add()
     {
-        $c = new Configuration(['foo' => 123, 'bar' => 456]);
+        $c = new Configuration($this->getConfigurationItems());
 
         $c->attach($this->getObserver());
         $c->attach($this->getObserver());
 
-        $c->add('baz', 789);
+        // If the mocked observers aren't notified, an error will be thrown.
+        $c->add('foo', 123);
     }
 
     public function test_configuration_notifies_observers_on_set()
     {
-        $c = new Configuration(['foo' => 123, 'bar' => 456]);
+        $c = new Configuration($this->getConfigurationItems());
 
         $c->attach($this->getObserver());
         $c->attach($this->getObserver());
 
-        $c->set('baz', 789);
+        // If the mocked observers aren't notified, an error will be thrown.
+        $c->set('foo', 123);
     }
 
     public function test_configuration_does_not_notify_observers_on_reset()
     {
-        $c = new Configuration(['foo' => 123]);
+        $c = new Configuration($this->getConfigurationItems());
 
         $c->attach($this->getObserver(1));
-        $c->set('foo', 456);
+        $c->set('foo', 123);
 
         // Since we told the mocked observer it should only be updated once,
         // if the reset method notifies observers, we will get an error.
         $c->reset();
-    }
-
-    public function tearDown()
-    {
-        Mockery::close();
     }
 }

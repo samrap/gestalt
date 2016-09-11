@@ -2,7 +2,7 @@
 
 use Gestalt\Loaders\PhpDirectoryLoader;
 
-class PhpDirectoryLoaderTest extends PHPUnit_Framework_TestCase
+class PhpDirectoryLoaderTest extends TestCase
 {
     public function test_load_method_returns_configuration_array()
     {

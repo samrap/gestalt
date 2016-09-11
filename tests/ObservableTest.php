@@ -2,7 +2,7 @@
 
 use Gestalt\Util\Observable;
 
-class ObservableTest extends PHPUnit_Framework_TestCase
+class ObservableTest extends TestCase
 {
     /**
      * A test object using the \Gestalt\Util\Observable trait.
@@ -14,23 +14,9 @@ class ObservableTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        parent::setUp();
+
         $this->observable = new Observable;
-    }
-
-    /**
-     * Get a mocked Observer implementation.
-     */
-    protected function getObserver($maxUpdates = 0)
-    {
-        $observer = Mockery::mock('Gestalt\Util\ObserverInterface');
-
-        if ($maxUpdates > 0) {
-            $observer->shouldReceive('update')->with($this->observable)->times($maxUpdates);
-        } else {
-            $observer->shouldReceive('update')->with($this->observable);
-        }
-
-        return $observer;
     }
 
     public function test_observable_attaches_observer()
@@ -49,10 +35,5 @@ class ObservableTest extends PHPUnit_Framework_TestCase
         $this->observable->notify();
         $this->observable->detach($observer);
         $this->observable->notify();
-    }
-
-    public function tearDown()
-    {
-        Mockery::close();
     }
 }

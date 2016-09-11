@@ -2,7 +2,7 @@
 
 use Gestalt\Loaders\IniDirectoryLoader;
 
-class IniDirectoryLoaderTest extends PHPUnit_Framework_TestCase
+class IniDirectoryLoaderTest extends TestCase
 {
     public function test_load_method_returns_configuration_array()
     {
