@@ -152,7 +152,10 @@ class ConfigurationTest extends TestCase
 
     public function test_configuration_is_observable()
     {
-        $this->assertInstanceOf('Gestalt\Util\Observable', new Configuration($this->getConfigurationItems()));
+        $this->assertInstanceOf(
+            'Gestalt\Util\Observable',
+            new Configuration($this->getConfigurationItems())
+        );
     }
 
     public function test_configuration_notifies_observers_on_add()
