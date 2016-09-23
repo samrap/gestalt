@@ -88,11 +88,23 @@ The `add` method will only update the Configuration object if the configuration 
 $config->set('debug', false);
 ```
 
+At some point you may wish to reset the Configuration object back to the original values it was created with. This can be done at any time by using the object's `reset` method:
+
+```php
+$config->reset();
+```
+
+The `reset` method returns an instance of itself, allowing you chain additional method calls:
+
+```php
+$config->reset()->add('debug', true);
+```
+
 #### Custom Loaders
 So far in the examples, we have been creating our Configuration object by passing in an array to its constructor. While this may work for smaller applications and frameworks, it is likely you have a more robust way of storing your configuration values. Gestalt is built to handle such cases thanks to it's custom loaders:
 
 ```php
-$loader = new DirectoryLoader;
+$loader = new PhpDirectoryLoader;
 $config = Configuration::fromLoader($loader);
 ```
 
@@ -103,7 +115,7 @@ namespace App\Configuration;
 
 use Gestalt\Loaders\LoaderInterface;
 
-class DirectoryLoader implements LoaderInterface
+class PhpFileLoader implements LoaderInterface
 {
     /**
      * Configuration files to load.
@@ -139,7 +151,7 @@ All loaders must implement the `Gestalt\Loaders\LoaderInterface` interface and i
 Now that we have defined how our loader will get the configuration values, we can simply pass an instance to the `Configuration::fromLoader` method to retrieve a new Configuration instance:
 
 ```php
-$loader = new DirectoryLoader;
+$loader = new PhpFileLoader;
 $config = Configuration::fromLoader($loader);
 
 $app = $config->get('app');
@@ -147,6 +159,64 @@ $mail = $config->get('mail');
 ```
 
 As you can see, using loaders can be quite powerful in conjunction with Gestalt's Configuration object. While you can create your own loaders, Gestalt ships with some prebuilt loaders right out of the box. They, along with the interface, live in the `Gestalt\Loaders` namespace.
+
+#### Saving Configuration Changes
+It is likely that your configuration settings are stored in some sort of _stateful_ manner. Whether it is a group of JSON files, YAML files, or even stored in the database, there may be a time when you wish to persist the changes made in your application to your stateful configuration. Gestalt has no working knowledge of where your configuration values come from, so it cannot do this directly, but it does help you quite a bit by using the [Observer Pattern](https://en.wikipedia.org/wiki/Observer_pattern).
+
+Simply put, the Configuration object will notify any registered _observers_ whenever the `add` or `set` methods are called.
+
+To register an observer, simply pass an observer instance to the Configuration's `attach` method:
+
+```php
+$config = new Configuration(['debug' => true]);
+$config->attach(new ConfigurationObserver);
+```
+
+You can attach as many observers as you would like to the Configuration object. Whenever the `add` or `set` methods are called, each observer's `update` method will be called with the Configuration instance as the parameter.
+
+You can also detach observers by calling the `detach` method on the Coniguration object:
+
+```php
+$config->detach($myObserver);
+```
+
+To create an observer, define a class that implements the `Gestalt\Util\ObserverInterface` interface. This interface requires one public method, `update`, which takes an `Observable` as its only parameter. Since the Configuration object extends the `Gestalt\Util\Observable` class, each observer will get the Configuration instance it is attached to and be able to perform stateful operations accordingly. Let's look at an example of a basic observer you might define in your app:
+
+```php
+...
+
+use Gestalt\Util\Observable;
+use Gestalt\Util\ObserverInterface;
+
+class ConfigurationObserver implements ObserverInterface
+{
+    public function update(Observable $config)
+    {
+        $this->file->write($config->all());
+    }
+}
+
+```
+
+We implement the `ObserverInterface` and define its `update` method to write the values its argument to some file object. Once we register this observer with our Configuration object, the `update` method will be called whenever we `set` or `add` a value to the configuration.
+
+Using this feature in conjuntion with Custom Loaders can be quite powerful. Let's look at a full example:
+
+```php
+$config = Configuration::fromLoader(new JsonFileLoader);
+$config->attach(new JsonFileObserver);
+
+// Add and set methods are called, JsonFileObserver's update
+// method will be called with the updated configuration object.
+$config->add('bar', 123);
+$config->set('debug', true);
+```
+
+Note that calling the Configuration's `reset` method does not automatically notify the observers. However, since `reset` returns an instance of itself, we can chain the notify function like so:
+
+```php
+$config->reset()->notify();
+```
 
 ## Conclusion
 More documentation and features coming soon!
