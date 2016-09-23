@@ -2,6 +2,7 @@
 
 namespace Gestalt;
 
+use Closure;
 use ArrayAccess;
 use Traversable;
 use Gestalt\Util\Observable;
@@ -33,6 +34,21 @@ class Configuration extends Observable implements ArrayAccess
         $this->items = $this->getItemsAsArray($items);
 
         $this->original = $this->items;
+    }
+
+    /**
+     * Create a new Configuration with the given loader.
+     *
+     * @param  \Gestalt\Loaders\LoaderInterface|\Closure $loader
+     * @return \Gestalt\Collection
+     */
+    public static function create($loader)
+    {
+        if ($loader instanceof Closure) {
+            return new self($loader());
+        } elseif ($loader instanceof LoaderInterface) {
+            return new self($loader->load());
+        }
     }
 
     /**
