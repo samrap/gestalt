@@ -2,46 +2,23 @@
 
 namespace Gestalt\Loaders;
 
-use DirectoryIterator;
-
-class YamlDirectoryLoader implements LoaderInterface
+class YamlDirectoryLoader extends DirectoryLoader
 {
     /**
-     * The directory to load INI configuration files from.
+     * The file extension that each file must have to be loaded.
      *
-     * @var array
+     * @var string
      */
-    protected $directory;
+    protected $extension = 'yaml';
 
     /**
-     * Create an IniDirectoryLoader instance.
+     * Define the method of translating the current file into a configuration.
      *
-     * @param string $directory
+     * @param  string $filePath
+     * @return mixed
      */
-    public function __construct($directory)
+    public function translateFile($filePath)
     {
-        $this->directory = $directory;
-    }
-
-    /**
-     * Load the configuration items and return them as an array.
-     *
-     * @return array
-     */
-    public function load()
-    {
-        $items = [];
-        $directory = new DirectoryIterator(realpath($this->directory));
-
-        foreach ($directory as $file) {
-            if ($file->isFile() && $file->getExtension() == 'yaml') {
-                $filename = $file->getFilename();
-                $config = substr($filename, 0, strrpos($filename, '.'));
-
-                $items[$config] = yaml_parse_file($file->getPathName());
-            }
-        }
-
-        return $items;
+        return yaml_parse_file($filePath);
     }
 }
