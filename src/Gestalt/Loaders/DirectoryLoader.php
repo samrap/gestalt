@@ -36,7 +36,7 @@ abstract class DirectoryLoader implements LoaderInterface
      * @param  string $filePath
      * @return mixed
      */
-    public abstract function translateFile($filePath);
+    abstract public function translateFile($filePath);
 
     /**
      * Load the configuration items and return them as an array.
