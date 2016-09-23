@@ -2,46 +2,23 @@
 
 namespace Gestalt\Loaders;
 
-use DirectoryIterator;
-
-class PhpDirectoryLoader implements LoaderInterface
+class PhpDirectoryLoader extends DirectoryLoader
 {
     /**
-     * The directory to load PHP configuration files from.
+     * The file extension that each file must have to be loaded.
      *
-     * @var array
+     * @var string
      */
-    protected $directory;
+    protected $extension = 'php';
 
     /**
-     * Create a PhpDirectoryLoader instance.
+     * Define the method of translating the current file into a configuration.
      *
-     * @param string $directory
+     * @param  string $filePath
+     * @return mixed
      */
-    public function __construct($directory)
+    public function translateFile($filePath)
     {
-        $this->directory = $directory;
-    }
-
-    /**
-     * Load the configuration items and return them as an array.
-     *
-     * @return array
-     */
-    public function load()
-    {
-        $items = [];
-        $directory = new DirectoryIterator(realpath($this->directory));
-
-        foreach ($directory as $file) {
-            if ($file->isFile() && $file->getExtension() == 'php') {
-                $filename = $file->getFilename();
-                $config = substr($filename, 0, strrpos($filename, '.'));
-
-                $items[$config] = require $file->getPathname();
-            }
-        }
-
-        return $items;
+        return require $filePath;
     }
 }
