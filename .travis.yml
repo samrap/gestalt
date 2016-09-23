@@ -8,8 +8,8 @@ php:
 sudo: required
 
 before_install:
-  - printf "\n" | pecl install yaml-beta
-  - echo "extension = yaml.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - if [[ $TRAVIS_PHP_VERSION < 7.0 ]]; then printf "\n" | pecl install yaml; fi
+  - if [[ $TRAVIS_PHP_VERSION >= 7.0 ]]; then printf "\n" | pecl install yaml-beta; fi
 
 install:
   - travis_retry composer install --no-interaction --prefer-source
