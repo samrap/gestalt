@@ -5,7 +5,11 @@ php:
   - 7.0
   - hhvm
 
-sudo: false
+sudo: required
+
+before_install:
+  - sudo apt-get install -y libyaml-dev
+  - sudo pecl install yaml-beta && echo "extension=yaml.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 install:
   - travis_retry composer install --no-interaction --prefer-source
