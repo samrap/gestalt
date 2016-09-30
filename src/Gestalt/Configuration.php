@@ -234,6 +234,28 @@ class Configuration extends Observable implements ArrayAccess
     }
 
     /**
+     * Modify a chunk of the Configuration within the specified prefix.
+     *
+     * @param  string $prefix
+     * @param  \Closure $callback
+     * @return void
+     */
+    public function prefix($prefix, $callback)
+    {
+        $partial = new self($this->get($prefix));
+
+        // We will pass the newly created "partial" Configuration object to the
+        // callback so that it can be used within the given prefix.
+        $callback($partial);
+
+        // We want to make sure that any changes made to the prefixed object are
+        // reflected in this object, so we will swap it with the partial.
+        $this->set($prefix, $partial->all());
+
+        unset($partial);
+    }
+
+    /**
      * Add or modify an item in the configuration.
      *
      * @param string $offset

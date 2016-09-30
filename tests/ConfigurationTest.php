@@ -210,4 +210,35 @@ class ConfigurationTest extends TestCase
 
         $this->assertEquals('1.0', $c->get('app.version'));
     }
+
+    public function test_prefix_method_gets_prefixed_configuration()
+    {
+        $testval = null;
+
+        $c = new Configuration($this->getConfigurationItems());
+        $c->prefix('database.drivers.mysql', function ($partial) use (&$testval) {
+            $testval = $partial->get('database');
+        });
+
+        $this->assertEquals($c->get('database.drivers.mysql.database'), $testval);
+    }
+
+    public function test_prefix_method_modifies_prefixed_configuration()
+    {
+        $c = new Configuration($this->getConfigurationItems());
+        $c->prefix('database.drivers.mysql', function ($partial) {
+            $partial->set('username', 'bonnie');
+            $partial->set('password', 'martini');
+            $partial->add('salt', 'pepper');
+        });
+
+        $this->assertEquals([
+            'database' => 'gestalt',
+            'username' => 'bonnie',
+            'password' => 'martini',
+            'salt' => 'pepper',
+        ], $c->get('database.drivers.mysql'));
+
+        $this->assertTrue($c->get('app.debug'));
+    }
 }
