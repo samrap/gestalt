@@ -180,6 +180,17 @@ class ConfigurationTest extends TestCase
         $c->set('foo', 123);
     }
 
+    public function test_configuration_notifies_observers_on_remove()
+    {
+        $c = new Configuration($this->getConfigurationItems());
+
+        $c->attach($this->getObserver());
+        $c->attach($this->getObserver());
+
+        // If the mocked observers aren't notified, an error will be thrown.
+        $c->remove('app.version');
+    }
+
     public function test_configuration_does_not_notify_observers_on_reset()
     {
         $c = new Configuration($this->getConfigurationItems());

@@ -219,6 +219,8 @@ class Configuration extends Observable implements ArrayAccess
         }
 
         unset($section[array_shift($keys)]);
+
+        $this->notify();
     }
 
     /**
