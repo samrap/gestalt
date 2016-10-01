@@ -53,7 +53,7 @@ abstract class DirectoryLoader implements LoaderInterface
                 $filename = $file->getFilename();
                 $config = substr($filename, 0, strrpos($filename, '.'));
 
-                $items[$config] = $this->translateFile($file->getPathName());
+                $items[$config] = $this->translateFile($file->getPathname());
             }
         }
 
