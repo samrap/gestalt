@@ -19,6 +19,6 @@ class JsonDirectoryLoader extends DirectoryLoader
      */
     public function translateFile($filePath)
     {
-        return json_decode($filePath);
+        return json_decode(file_get_contents($filePath), true);
     }
 }

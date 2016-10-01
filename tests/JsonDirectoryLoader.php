@@ -9,6 +9,6 @@ class JsonDirectoryLoaderTest extends TestCase
         $loader = new JsonDirectoryLoader(__DIR__.'/config');
         $loaded = $loader->load();
 
-        $this->assertArrayHasKey('foobar', $loaded);
+        $this->assertArrayHasKey('baz', $loaded['foobar']);
     }
 }
