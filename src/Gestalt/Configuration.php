@@ -42,7 +42,7 @@ class Configuration extends Observable implements ArrayAccess
      * @param  \Gestalt\Loaders\LoaderInterface|\Closure $loader
      * @return \Gestalt\Collection
      */
-    public static function create($loader)
+    public static function load($loader)
     {
         if ($loader instanceof Closure) {
             return new self($loader());

@@ -206,7 +206,7 @@ class ConfigurationTest extends TestCase
     public function test_create_method_creates_configuration_from_closure_loader()
     {
         $values = $this->getConfigurationItems();
-        $c = Configuration::create(function () use ($values) {
+        $c = Configuration::load(function () use ($values) {
             return $values;
         });
 
@@ -217,7 +217,7 @@ class ConfigurationTest extends TestCase
     {
         $loader = Mockery::mock('\Gestalt\Loaders\LoaderInterface');
         $loader->shouldReceive('load')->andReturn($this->getConfigurationItems());
-        $c = Configuration::create($loader);
+        $c = Configuration::load($loader);
 
         $this->assertEquals('1.0', $c->get('app.version'));
     }
