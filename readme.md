@@ -16,4 +16,45 @@ Gestalt is a simple and elegant PHP package for managing your framework's config
 - **Flexible:** Developers like to do things _our_ way. Gestalt gives you the flexibility to integrate seamlessly with how you store your configuration values.
 - **Expressive syntax**: With its clean, collection-like syntax, code artisans will feel right at home. Not to worry messy developers, you'll like it too!
 
+### Examples
+
+**Basic Usage**
+
+```php
+$config = new Configuration([
+    'app' => [
+        'debug' => true,
+        'version' => '1.0',
+    ],
+]);
+
+// Get values using dot notation or ArrayAccess.
+$config->get('app.debug');
+$config['app'];
+
+// Add values using dot notation or ArrayAccess.
+$config->add('app.locale', 'en');
+$config['mail'] = ['driver' => 'MailMonkey'];
+```
+
+**Custom Loading**
+
+```php
+$config = Configuration::load(new JsonFileLoader);
+
+$config->get('app.debug');
+```
+
+**Observers**
+
+```php
+$config = new Configuration($values);
+
+$config->attach(new StatefulObserver);
+
+// Notifies the StatefulObserver that the
+// Configuration has been updated.
+$config->set('app.debug', false);
+```
+
 Interested? [Check out the docs](https://github.com/samrap/gestalt-docs) to see all of the features in action!
