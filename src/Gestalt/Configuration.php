@@ -266,7 +266,7 @@ class Configuration extends Observable implements ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this->add($offset, $value);
+        $this->set($offset, $value);
     }
 
     /**

@@ -120,7 +120,14 @@ class ConfigurationTest extends TestCase
     {
         $c = new Configuration($this->getConfigurationItems());
 
-        $this->assertArrayHasKey('version', $c['app']);
+        $this->assertArrayHasKey('debug', $c['app']);
+        $this->assertTrue($c['app.debug']);
+
+        $c['app.debug'] = false;
+        $this->assertEquals(false, $c['app.debug']);
+
+        unset($c['app.debug']);
+        $this->assertNull($c['app.debug']);
     }
 
     public function test_instantiation_from_different_types()
