@@ -13,12 +13,12 @@ Gestalt is a simple and elegant PHP package for managing your framework's config
 ### Features
 - **Lightweight:** Gestalt is built to be lightweight. No dependencies, no bloat, just an object-oriented wrapper around your framework's configuration.
 - **Powerful:** Who said lightweight means powerless? Gestalt has a small footprint but packs a mean punch. Just take a look at its [Custom Loaders](https://github.com/samrap/gestalt-docs/blob/master/loaders.md) and [Observers](https://github.com/samrap/gestalt-docs/blob/master/observers.md) and you'll see for yourself.
-- **Flexible:** Developers like to do things _our_ way. Gestalt gives you the flexibility to integrate seamlessly with how you store your configuration values.
-- **Expressive syntax**: With its clean, collection-like syntax, code artisans will feel right at home. Not to worry messy developers, you'll like it too!
+- **Flexible:** Developers like to do things _our_ way. Gestalt gives you the flexibility to integrate seamlessly with your application.
+- **Expressive syntax**: With its clean, collection-like syntax, code artisans will feel right at home. Messy developers will like it too!
 
 ### Examples
 
-**Basic Usage**
+**Basic Usage** ([View Documentation](https://github.com/samrap/gestalt-docs/blob/master/introduction.md))
 
 ```php
 $config = new Configuration([
@@ -37,7 +37,7 @@ $config->add('app.locale', 'en');
 $config['mail'] = ['driver' => 'MailMonkey'];
 ```
 
-**Custom Loading**
+**Custom Loading** ([View Documentation](https://github.com/samrap/gestalt-docs/blob/master/loaders.md))
 
 ```php
 $config = Configuration::load(new JsonFileLoader);
@@ -45,7 +45,7 @@ $config = Configuration::load(new JsonFileLoader);
 $config->get('app.debug');
 ```
 
-**Observers**
+**Observers** ([View Documentation](https://github.com/samrap/gestalt-docs/blob/master/observers.md))
 
 ```php
 $config = new Configuration($values);
