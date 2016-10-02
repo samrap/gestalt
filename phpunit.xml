@@ -11,8 +11,7 @@
          syntaxCheck="false">
     <testsuites>
         <testsuite name="Gestalt Test Suite">
-            <directory suffix=".php">./tests/</directory>
-            <exclude>./tests/config</exclude>
+            <directory suffix="Test.php">./tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
