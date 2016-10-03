@@ -18,6 +18,8 @@ Gestalt is a simple and elegant PHP package for managing your framework's config
 
 ### Examples
 
+The following are just a few of the features Gestalt has to offer. [Visit the docs](https://github.com/samrap/gestalt-docs) for more on installation, usage, and features.
+
 **Basic Usage** ([Docs](https://github.com/samrap/gestalt-docs/blob/master/introduction.md))
 
 ```php
