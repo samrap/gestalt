@@ -20,6 +20,13 @@ class ConfigurationTest extends TestCase
         $this->assertEquals('gestalt', $c->get('database.drivers.mysql.database'));
     }
 
+    public function test_get_method_returns_default_value_if_item_isnt_present()
+    {
+        $c = new Configuration;
+
+        $this->assertEquals(123, $c->get('foo', 123));
+    }
+
     public function test_all_method_gets_all_items()
     {
         $c = new Configuration($this->getConfigurationItems());

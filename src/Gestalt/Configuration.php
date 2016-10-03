@@ -97,10 +97,11 @@ class Configuration extends Observable implements ArrayAccess
     /**
      * Get a configuration item.
      *
-     * @param  string $key
+     * @param  string  $key
+     * @param  mixed  $default
      * @return mixed
      */
-    public function get($key)
+    public function get($key, $default = null)
     {
         if ($this->exists($key)) {
             return $this->items[$key];
@@ -112,7 +113,7 @@ class Configuration extends Observable implements ArrayAccess
             if (is_array($result) && array_key_exists($piece, $result)) {
                 $result = $result[$piece];
             } else {
-                return;
+                return $default;
             }
         }
 
