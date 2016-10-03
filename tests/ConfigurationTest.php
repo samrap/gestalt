@@ -6,9 +6,9 @@ class ConfigurationTest extends TestCase
 {
     public function test_get_method_gets_item()
     {
-        $c = new Configuration($this->getConfigurationItems());
+        $c = new Configuration(['debug' => true]);
 
-        $this->assertArrayHasKey('debug', $c->get('app'));
+        $this->assertTrue($c->get('debug'));
     }
 
     public function test_get_method_gets_item_with_dot_notation()
@@ -22,10 +22,9 @@ class ConfigurationTest extends TestCase
 
     public function test_all_method_gets_all_items()
     {
-        $items = $this->getConfigurationItems();
         $c = new Configuration($this->getConfigurationItems());
 
-        $this->assertEquals($items, $c->all());
+        $this->assertEquals($this->getConfigurationItems(), $c->all());
     }
 
     public function test_exists_method_verifies_existance()
