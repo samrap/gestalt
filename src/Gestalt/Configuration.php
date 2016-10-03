@@ -54,7 +54,7 @@ class Configuration extends Observable implements ArrayAccess
     /**
      * Create a Configuration instance from a LoaderInterface's `load` method.
      *
-     * @deprecated 1.0.0 Replaced with more flexible `create` method.
+     * @deprecated 1.0.0 Replaced with more flexible `load` method.
      * @param  \Gestalt\Loaders\LoaderInterface $loader
      * @return \Gestalt\Configuration
      */
