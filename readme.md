@@ -18,7 +18,7 @@ Gestalt is a simple and elegant PHP package for managing your framework's config
 
 ### Examples
 
-**Basic Usage** ([View Documentation](https://github.com/samrap/gestalt-docs/blob/master/introduction.md))
+**Basic Usage** ([Docs](https://github.com/samrap/gestalt-docs/blob/master/introduction.md))
 
 ```php
 $config = new Configuration([
@@ -37,7 +37,7 @@ $config->add('app.locale', 'en');
 $config['mail'] = ['driver' => 'MailMonkey'];
 ```
 
-**Custom Loading** ([View Documentation](https://github.com/samrap/gestalt-docs/blob/master/loaders.md))
+**Custom Loading** ([Docs](https://github.com/samrap/gestalt-docs/blob/master/loaders.md))
 
 ```php
 $config = Configuration::load(new JsonFileLoader);
@@ -45,7 +45,7 @@ $config = Configuration::load(new JsonFileLoader);
 $config->get('app.debug');
 ```
 
-**Observers** ([View Documentation](https://github.com/samrap/gestalt-docs/blob/master/observers.md))
+**Observers** ([Docs](https://github.com/samrap/gestalt-docs/blob/master/observers.md))
 
 ```php
 $config = new Configuration($values);
