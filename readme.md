@@ -13,7 +13,50 @@ Gestalt is a simple and elegant PHP package for managing your framework's config
 ### Features
 - **Lightweight:** Gestalt is built to be lightweight. No dependencies, no bloat, just an object-oriented wrapper around your framework's configuration.
 - **Powerful:** Who said lightweight means powerless? Gestalt has a small footprint but packs a mean punch. Just take a look at its [Custom Loaders](https://github.com/samrap/gestalt-docs/blob/master/loaders.md) and [Observers](https://github.com/samrap/gestalt-docs/blob/master/observers.md) and you'll see for yourself.
-- **Flexible:** Developers like to do things _our_ way. Gestalt gives you the flexibility to integrate seamlessly with how you store your configuration values.
-- **Expressive syntax**: With its clean, collection-like syntax, code artisans will feel right at home. Not to worry messy developers, you'll like it too!
+- **Flexible:** Developers like to do things _our_ way. Gestalt gives you the flexibility to integrate seamlessly with your application.
+- **Expressive syntax**: With its clean, collection-like syntax, code artisans will feel right at home. Messy developers will like it too!
+
+### Examples
+
+The following are just a few of the features Gestalt has to offer. [Visit the docs](https://github.com/samrap/gestalt-docs) for more on installation, usage, and features.
+
+**Basic Usage** ([Learn More](https://github.com/samrap/gestalt-docs/blob/master/introduction.md))
+
+```php
+$config = new Configuration([
+    'app' => [
+        'debug' => true,
+        'version' => '1.0',
+    ],
+]);
+
+// Get values using dot notation or ArrayAccess.
+$config->get('app.debug');
+$config['app'];
+
+// Add values using dot notation or ArrayAccess.
+$config->add('app.locale', 'en');
+$config['mail'] = ['driver' => 'MailMonkey'];
+```
+
+**Custom Loading** ([Learn More](https://github.com/samrap/gestalt-docs/blob/master/loaders.md))
+
+```php
+$config = Configuration::load(new JsonFileLoader);
+
+$config->get('app.debug');
+```
+
+**Observers** ([Learn More](https://github.com/samrap/gestalt-docs/blob/master/observers.md))
+
+```php
+$config = new Configuration($values);
+
+$config->attach(new StatefulObserver);
+
+// Notifies the StatefulObserver that the
+// Configuration has been updated.
+$config->set('app.debug', false);
+```
 
 Interested? [Check out the docs](https://github.com/samrap/gestalt-docs) to see all of the features in action!

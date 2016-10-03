@@ -2,6 +2,7 @@
 
 namespace Gestalt;
 
+use Closure;
 use ArrayAccess;
 use Traversable;
 use Gestalt\Util\Observable;
@@ -36,8 +37,24 @@ class Configuration extends Observable implements ArrayAccess
     }
 
     /**
+     * Create a new Configuration with the given loader.
+     *
+     * @param  \Gestalt\Loaders\LoaderInterface|\Closure $loader
+     * @return \Gestalt\Collection
+     */
+    public static function load($loader)
+    {
+        if ($loader instanceof Closure) {
+            return new self($loader());
+        } elseif ($loader instanceof LoaderInterface) {
+            return new self($loader->load());
+        }
+    }
+
+    /**
      * Create a Configuration instance from a LoaderInterface's `load` method.
      *
+     * @deprecated 1.0.0 Replaced with more flexible `load` method.
      * @param  \Gestalt\Loaders\LoaderInterface $loader
      * @return \Gestalt\Configuration
      */
@@ -80,10 +97,11 @@ class Configuration extends Observable implements ArrayAccess
     /**
      * Get a configuration item.
      *
-     * @param  string $key
+     * @param  string  $key
+     * @param  mixed  $default
      * @return mixed
      */
-    public function get($key)
+    public function get($key, $default = null)
     {
         if ($this->exists($key)) {
             return $this->items[$key];
@@ -95,7 +113,7 @@ class Configuration extends Observable implements ArrayAccess
             if (is_array($result) && array_key_exists($piece, $result)) {
                 $result = $result[$piece];
             } else {
-                return;
+                return $default;
             }
         }
 
@@ -202,6 +220,8 @@ class Configuration extends Observable implements ArrayAccess
         }
 
         unset($section[array_shift($keys)]);
+
+        $this->notify();
     }
 
     /**
@@ -217,6 +237,28 @@ class Configuration extends Observable implements ArrayAccess
     }
 
     /**
+     * Modify a chunk of the Configuration within the specified prefix.
+     *
+     * @param  string $prefix
+     * @param  \Closure $callback
+     * @return void
+     */
+    public function prefix($prefix, $callback)
+    {
+        $partial = new self($this->get($prefix));
+
+        // We will pass the newly created "partial" Configuration object to the
+        // callback so that it can be used within the given prefix.
+        $callback($partial);
+
+        // We want to make sure that any changes made to the prefixed object are
+        // reflected in this object, so we will swap it with the partial.
+        $this->set($prefix, $partial->all());
+
+        unset($partial);
+    }
+
+    /**
      * Add or modify an item in the configuration.
      *
      * @param string $offset
@@ -225,7 +267,7 @@ class Configuration extends Observable implements ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this->add($offset, $value);
+        $this->set($offset, $value);
     }
 
     /**

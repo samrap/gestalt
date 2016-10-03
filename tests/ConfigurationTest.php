@@ -6,9 +6,9 @@ class ConfigurationTest extends TestCase
 {
     public function test_get_method_gets_item()
     {
-        $c = new Configuration($this->getConfigurationItems());
+        $c = new Configuration(['debug' => true]);
 
-        $this->assertArrayHasKey('debug', $c->get('app'));
+        $this->assertTrue($c->get('debug'));
     }
 
     public function test_get_method_gets_item_with_dot_notation()
@@ -20,12 +20,18 @@ class ConfigurationTest extends TestCase
         $this->assertEquals('gestalt', $c->get('database.drivers.mysql.database'));
     }
 
+    public function test_get_method_returns_default_value_if_item_isnt_present()
+    {
+        $c = new Configuration;
+
+        $this->assertEquals(123, $c->get('foo', 123));
+    }
+
     public function test_all_method_gets_all_items()
     {
-        $items = $this->getConfigurationItems();
         $c = new Configuration($this->getConfigurationItems());
 
-        $this->assertEquals($items, $c->all());
+        $this->assertEquals($this->getConfigurationItems(), $c->all());
     }
 
     public function test_exists_method_verifies_existance()
@@ -120,7 +126,14 @@ class ConfigurationTest extends TestCase
     {
         $c = new Configuration($this->getConfigurationItems());
 
-        $this->assertArrayHasKey('version', $c['app']);
+        $this->assertArrayHasKey('debug', $c['app']);
+        $this->assertTrue($c['app.debug']);
+
+        $c['app.debug'] = false;
+        $this->assertEquals(false, $c['app.debug']);
+
+        unset($c['app.debug']);
+        $this->assertNull($c['app.debug']);
     }
 
     public function test_instantiation_from_different_types()
@@ -152,7 +165,10 @@ class ConfigurationTest extends TestCase
 
     public function test_configuration_is_observable()
     {
-        $this->assertInstanceOf('Gestalt\Util\Observable', new Configuration($this->getConfigurationItems()));
+        $this->assertInstanceOf(
+            'Gestalt\Util\Observable',
+            new Configuration($this->getConfigurationItems())
+        );
     }
 
     public function test_configuration_notifies_observers_on_add()
@@ -177,6 +193,17 @@ class ConfigurationTest extends TestCase
         $c->set('foo', 123);
     }
 
+    public function test_configuration_notifies_observers_on_remove()
+    {
+        $c = new Configuration($this->getConfigurationItems());
+
+        $c->attach($this->getObserver());
+        $c->attach($this->getObserver());
+
+        // If the mocked observers aren't notified, an error will be thrown.
+        $c->remove('app.version');
+    }
+
     public function test_configuration_does_not_notify_observers_on_reset()
     {
         $c = new Configuration($this->getConfigurationItems());
@@ -187,5 +214,55 @@ class ConfigurationTest extends TestCase
         // Since we told the mocked observer it should only be updated once,
         // if the reset method notifies observers, we will get an error.
         $c->reset();
+    }
+
+    public function test_create_method_creates_configuration_from_closure_loader()
+    {
+        $values = $this->getConfigurationItems();
+        $c = Configuration::load(function () use ($values) {
+            return $values;
+        });
+
+        $this->assertEquals('1.0', $c->get('app.version'));
+    }
+
+    public function test_create_method_creates_configuration_from_class_loader()
+    {
+        $loader = Mockery::mock('\Gestalt\Loaders\LoaderInterface');
+        $loader->shouldReceive('load')->andReturn($this->getConfigurationItems());
+        $c = Configuration::load($loader);
+
+        $this->assertEquals('1.0', $c->get('app.version'));
+    }
+
+    public function test_prefix_method_gets_prefixed_configuration()
+    {
+        $testval = null;
+
+        $c = new Configuration($this->getConfigurationItems());
+        $c->prefix('database.drivers.mysql', function ($partial) use (&$testval) {
+            $testval = $partial->get('database');
+        });
+
+        $this->assertEquals($c->get('database.drivers.mysql.database'), $testval);
+    }
+
+    public function test_prefix_method_modifies_prefixed_configuration()
+    {
+        $c = new Configuration($this->getConfigurationItems());
+        $c->prefix('database.drivers.mysql', function ($partial) {
+            $partial->set('username', 'bonnie');
+            $partial->set('password', 'martini');
+            $partial->add('salt', 'pepper');
+        });
+
+        $this->assertEquals([
+            'database' => 'gestalt',
+            'username' => 'bonnie',
+            'password' => 'martini',
+            'salt' => 'pepper',
+        ], $c->get('database.drivers.mysql'));
+
+        $this->assertTrue($c->get('app.debug'));
     }
 }
