@@ -45,9 +45,9 @@ class Configuration extends Observable implements ArrayAccess
     public static function load($loader)
     {
         if ($loader instanceof Closure) {
-            return new self($loader());
+            return new static($loader());
         } elseif ($loader instanceof LoaderInterface) {
-            return new self($loader->load());
+            return new static($loader->load());
         }
     }
 
