@@ -3,6 +3,7 @@
 namespace Gestalt;
 
 use Closure;
+use Exception;
 use ArrayAccess;
 use Traversable;
 use Gestalt\Util\Observable;
@@ -220,6 +221,26 @@ class Configuration extends Observable implements ArrayAccess
         }
 
         unset($section[array_shift($keys)]);
+
+        $this->notify();
+    }
+
+    /**
+     * [merge description]
+     *
+     * @param  [type]  $key
+     * @param  array   $merge
+     * @return  [type]  [description]
+     */
+    public function merge($key, array $merge)
+    {
+        $original = $this->get($key);
+
+        if (! is_array($original)) {
+            throw new Exception('Gestalt: Item to merge with must be array.');
+        }
+
+        $this->set($key, array_merge($original, $merge));
 
         $this->notify();
     }

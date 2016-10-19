@@ -265,4 +265,23 @@ class ConfigurationTest extends TestCase
 
         $this->assertTrue($c->get('app.debug'));
     }
+
+    public function test_merge_method_merges_array()
+    {
+        $c = new Configuration($this->getConfigurationItems());
+
+        $c->merge('app', ['log' => false]);
+
+        $this->assertFalse($c->get('app.log'));
+        $this->assertTrue($c->get('app.debug'));
+    }
+
+    public function test_merge_method_fails_for_non_arrays()
+    {
+        $this->expectException(\Exception::class);
+
+        $c = new Configuration($this->getConfigurationItems());
+
+        $c->merge('app.debug', ['foo' => 'bar']);
+    }
 }
