@@ -226,23 +226,22 @@ class Configuration extends Observable implements ArrayAccess
     }
 
     /**
-     * [merge description]
+     * Merge an array into an existing configuration array.
      *
-     * @param  [type]  $key
-     * @param  array   $merge
-     * @return  [type]  [description]
+     * @param  string  $key
+     * @param  array  $merge
+     * @return void
      */
     public function merge($key, array $merge)
     {
         $original = $this->get($key);
 
-        if (! is_array($original)) {
+        if (is_array($original)) {
+            $this->set($key, array_merge($original, $merge));
+            $this->notify();
+        } else {
             throw new Exception('Gestalt: Item to merge with must be array.');
         }
-
-        $this->set($key, array_merge($original, $merge));
-
-        $this->notify();
     }
 
     /**

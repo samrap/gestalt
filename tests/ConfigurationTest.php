@@ -271,9 +271,11 @@ class ConfigurationTest extends TestCase
         $c = new Configuration($this->getConfigurationItems());
 
         $c->merge('app', ['log' => false]);
+        $c->merge('database.drivers', ['mssql' => 'nah']);
 
         $this->assertFalse($c->get('app.log'));
         $this->assertTrue($c->get('app.debug'));
+        $this->assertEquals('nah', $c->get('database.drivers.mssql'));
     }
 
     public function test_merge_method_fails_for_non_arrays()
