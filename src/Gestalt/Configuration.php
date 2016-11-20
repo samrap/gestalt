@@ -245,6 +245,42 @@ class Configuration extends Observable implements ArrayAccess
     }
 
     /**
+     * Flatten the configuration items into a one-dimmensional array.
+     *
+     * @see \Gestalt\Configuration::dot()
+     *
+     * @return void
+     */
+    public function flatten()
+    {
+        $this->items = $this->dot($this->items);
+    }
+
+    /**
+     * Flatten an associative array using dots.
+     *
+     * https://github.com/laravel/framework/blob/5.3/src/Illuminate/Support/Arr.php#L81
+     *
+     * @param  array  $array
+     * @param  string  $prefix
+     * @return array
+     */
+    private function dot(array $array, $prefix = '')
+    {
+        $items = [];
+
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $items = array_merge($items, $this->dot($value, $prefix.$key.'.'));
+            } else {
+                $items[$prefix.$key] = $value;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
      * Reset the configuration items to the original values.
      *
      * @return \Gestalt\Collection

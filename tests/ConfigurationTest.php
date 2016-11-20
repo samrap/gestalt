@@ -286,4 +286,16 @@ class ConfigurationTest extends TestCase
 
         $c->merge('app.debug', ['foo' => 'bar']);
     }
+
+    public function test_flatten_method_flattens_items_into_dot_notation()
+    {
+        $c = new Configuration($this->getConfigurationItems());
+
+        $c->flatten();
+
+        $this->assertArrayHasKey('app.debug', $c->all());
+        $this->assertArrayHasKey('database.drivers.mysql.database', $c->all());
+        $this->assertArrayHasKey('database.drivers.sqlite.database', $c->all());
+        $this->assertEquals('1.0', $c->get('app.version'));
+    }
 }
